@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm ngược đến Tết Nguyên Đán 2025</title>
+    <!-- Thêm Font Awesome để sử dụng biểu tượng lá thư -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://i.imgur.com/x5jXZsk.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #countdown {
+            text-align: center;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+
+        #time {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        #time div {
+            font-size: 2rem;
+            margin: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        #time div span {
+            font-size: 3rem;
+            color: #00fdd4;
+        }
+
+        #time div {
+            color: #000;
+        }
+
+        /* Phong cách cho chữ "Mở thư" */
+        #openText {
+            font-size: 1.2rem;
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        /* Phong cách cho nút biểu tượng lá thư */
+        #letterBtn {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #letterBtn i {
+            font-size: 2rem;
+            color: #d32f2f;
+            transition: transform 0.3s ease;
+        }
+
+        /* Hiệu ứng nổi khi rê chuột qua */
+        #letterBtn:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Hiệu ứng lật */
+        #letterBtn.active {
+            transform: rotateY(180deg);
+        }
+
+        #letterBtn.active i {
+            transform: rotateY(180deg);
+        }
+
+        /* Phong cách cho hộp thông báo lời chúc */
+        #messageBox {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateY(180deg);
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            z-index: 10;
+            animation: flip 0.6s forwards ease-in-out;
+        }
+
+        #messageBox h2 {
+            color: #d32f2f;
+        }
+
+        #messageBox p {
+            font-size: 1.2rem;
+        }
+
+        #messageBox button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #messageBox button:hover {
+            background-color: #c12727;
+        }
+
+        /* Hiệu ứng lật cho hộp thư */
+        @keyframes flip {
+            from {
+                transform: translate(-50%, -50%) rotateY(180deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotateY(0deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown">
+        <h1>Đếm ngược đến Tết Nguyên Đán 2025</h1>
+        <div id="time">
+            <div><span id="days"></span>Ngày</div>
+            <div><span id="hours"></span>Giờ</div>
+            <div><span id="minutes"></span>Phút</div>
+            <div><span id="seconds"></span>Giây</div>
+        </div>
+
+        <!-- Dòng chữ "Mở thư" -->
+        <div id="openText"></div>
+
+        <!-- Nút biểu tượng lá thư -->
+        <div id="letterBtn">
+            <i class="fas fa-envelope"></i>
+        </div>
+    </div>
+
+    <!-- Hộp thông báo lời chúc -->
+    <div id="messageBox">
+        <h2>Lời Chúc Mừng Năm Mới!</h2>
+        <p>Chúc bạn và gia đình một năm mới an khang, thịnh vượng, vạn sự như ý!</p>
+        <button id="closeMessage">Đóng</button>
+    </div>
+
+    <!-- Thêm âm thanh vào trang -->
+    <audio id="tetSound" src="nhactetdongday.mp3" preload="auto"></audio>
+
+    <script>
+        // Lấy các phần tử HTML để hiển thị thời gian
+        const daysElement = document.getElementById("days");
+        const hoursElement = document.getElementById("hours");
+        const minutesElement = document.getElementById("minutes");
+        const secondsElement = document.getElementById("seconds");
+        const tetSound = document.getElementById("tetSound");
+
+        // Thiết lập ngày Tết Nguyên Đán 2025
+        const tet2025 = new Date("January 29, 2025 00:00:00").getTime();
+
+        // Hàm cập nhật đếm ngược
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeRemaining = tet2025 - now;
+
+            // Tính toán số ngày, giờ, phút, giây
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            // Cập nhật giá trị vào HTML
+            daysElement.innerHTML = days;
+            hoursElement.innerHTML = hours;
+            minutesElement.innerHTML = minutes;
+            secondsElement.innerHTML = seconds;
+
+            // Nếu đã đến Tết, dừng đếm ngược và phát nhạc
+            if (timeRemaining < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown").innerHTML = "<h1>Chúc Mừng Năm Mới!</h1>";
+                tetSound.play(); // Phát âm thanh Tết
+            }
+        }
+
+        // Gọi hàm updateCountdown mỗi giây
+        const countdownInterval = setInterval(updateCountdown, 1000);
+
+        // Phát âm thanh ngay khi người dùng nhấp chuột
+        document.body.addEventListener('click', function() {
+            tetSound.play();
+        });
+
+        // Hiển thị và đóng lời chúc, kèm theo hiệu ứng lật
+        const letterBtn = document.getElementById("letterBtn");
+        const messageBox = document.getElementById("messageBox");
+        const closeMessage = document.getElementById("closeMessage");
+
+        letterBtn.addEventListener('click', function() {
+            letterBtn.classList.toggle('active');
+            messageBox.style.display = 'block';
+        });
+
+        closeMessage.addEventListener('click', function() {
+            messageBox.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
